@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/binge/static/css/main.2d5993b1.css",
+    "main.js": "/binge/static/js/main.c562cf7d.js",
+    "static/js/488.d37b42c4.chunk.js": "/binge/static/js/488.d37b42c4.chunk.js",
+    "static/media/Binge-12-10-2024.png": "/binge/static/media/Binge-12-10-2024.34945e2e0c9ba683512b.png",
+    "index.html": "/binge/index.html",
+    "main.2d5993b1.css.map": "/binge/static/css/main.2d5993b1.css.map",
+    "main.c562cf7d.js.map": "/binge/static/js/main.c562cf7d.js.map",
+    "488.d37b42c4.chunk.js.map": "/binge/static/js/488.d37b42c4.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2d5993b1.css",
+    "static/js/main.c562cf7d.js"
+  ]
+}
