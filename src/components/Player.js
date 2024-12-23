@@ -24,12 +24,12 @@ export default function Player() {
   const [srcUrl, setSrcUrl] = useState(generateSrcUrl);
 
   // Handle cycling through domains
-  const handleCycleSource = () => {
-    const nextIndex = (currentDomainIndex + 1) % domains.length;
-    setCurrentDomainIndex(nextIndex);
-    alert(generateSrcUrl(nextIndex))
-    setSrcUrl(generateSrcUrl(nextIndex));
-  };
+  // const handleCycleSource = () => {
+  //   const nextIndex = (currentDomainIndex + 1) % domains.length;
+  //   setCurrentDomainIndex(nextIndex);
+  //   alert(generateSrcUrl(nextIndex))
+  //   setSrcUrl(generateSrcUrl(nextIndex));
+  // };
 
   useEffect(() => {
     const handleBackButton = () => {
