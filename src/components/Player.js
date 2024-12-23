@@ -24,12 +24,12 @@ export default function Player() {
   const [srcUrl, setSrcUrl] = useState(generateSrcUrl);
 
   // Handle cycling through domains
-  // const handleCycleSource = () => {
-  //   const nextIndex = (currentDomainIndex + 1) % domains.length;
-  //   setCurrentDomainIndex(nextIndex);
-  //   alert(generateSrcUrl(nextIndex))
-  //   setSrcUrl(generateSrcUrl(nextIndex));
-  // };
+  const handleCycleSource = () => {
+    const nextIndex = (currentDomainIndex + 1) % domains.length;
+    setCurrentDomainIndex(nextIndex);
+    alert(generateSrcUrl(nextIndex))
+    setSrcUrl(generateSrcUrl(nextIndex));
+  };
 
   useEffect(() => {
     const handleBackButton = () => {
@@ -54,12 +54,12 @@ export default function Player() {
       </button>
 
       {/* Try a Different Source Button */}
-      {/* <button
+      <button
         className="absolute bottom-8 right-8 z-10 px-4 py-2 bg-gray-800 bg-opacity-50 text-white rounded-lg hover:bg-opacity-75 backdrop-blur-md"
         onClick={handleCycleSource}
       >
         Try a Different Source
-      </button> */}
+      </button>
 
       {/* Video Player */}
       <iframe
