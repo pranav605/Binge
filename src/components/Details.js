@@ -66,6 +66,12 @@ const Details = () => {
   if (!details) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <button
+        className="absolute top-4 left-4 z-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        onClick={() => navigate('/')}
+      >
+        Back
+      </button>
         <p className="text-white text-lg">No details available. Please try again.</p>
       </div>
     );
@@ -74,6 +80,12 @@ const Details = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
+      <button
+        className="absolute top-4 left-4 z-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        onClick={() => navigate('/')}
+      >
+        Back
+      </button>
       <div className="max-w-4xl mx-auto p-4">
         <h1 className="text-3xl font-bold mb-4">{details.title || details.name}</h1>
         {details.poster_path && (

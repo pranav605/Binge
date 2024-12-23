@@ -136,7 +136,7 @@ const AnimeSearch = () => {
                       </div>
                       {expandedManga === manga.id && (
                         <div className="ml-4 mt-2 bg-gray-800 p-4 rounded">
-                          {[...Array(10)].map((_, index) => (
+                          {[...Array(20)].map((_, index) => (
                             <button
                               key={index}
                               onClick={() => handleVolumeSelect(manga.id, index + 1)}

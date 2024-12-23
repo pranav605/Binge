@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function Player() {
@@ -6,17 +6,34 @@ export default function Player() {
   const navigate = useNavigate();
   const { details, backObj } = location.state || {};
   const isMovie = details.type === 'movie';
-  let srcUrl = '';
+  
+  // Domains to cycle through
+  const domains = ['vidsrc.dev'];
+  const [currentDomainIndex, setCurrentDomainIndex] = useState(0);
 
-  if (isMovie) {
-    srcUrl = `https://vidsrc.dev/embed/movie/${details.tmdb_id}`;
-  } else {
-    srcUrl = `https://vidsrc.dev/embed/tv/${details.tmdb_id}/${details.season}/${details.episode}`;
-  }
+  // Generate the URL based on the current domain
+  const generateSrcUrl = (index = currentDomainIndex) => {
+    const currentDomain = domains[index];
+    if (isMovie) {
+      return `https://${currentDomain}/embed/movie/${details.tmdb_id}`;
+    } else {
+      return `https://${currentDomain}/embed/tv/${details.tmdb_id}/${details.season}/${details.episode}`;
+    }
+  };
+
+  const [srcUrl, setSrcUrl] = useState(generateSrcUrl);
+
+  // Handle cycling through domains
+  const handleCycleSource = () => {
+    const nextIndex = (currentDomainIndex + 1) % domains.length;
+    setCurrentDomainIndex(nextIndex);
+    alert(generateSrcUrl(nextIndex))
+    setSrcUrl(generateSrcUrl(nextIndex));
+  };
 
   useEffect(() => {
     const handleBackButton = () => {
-        navigate('/details', { state: { details: backObj } });
+      navigate('/details', { state: { details: backObj } });
     };
 
     window.addEventListener('popstate', handleBackButton);
@@ -24,17 +41,25 @@ export default function Player() {
     return () => {
       window.removeEventListener('popstate', handleBackButton);
     };
-  }, [navigate]);
+  }, [navigate, backObj]);
 
   return (
     <div className="relative h-screen">
       {/* Back Button */}
       <button
         className="absolute top-4 left-4 z-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        onClick={() => navigate('/details', { state: { details: backObj } })} // Go back to the previous page
+        onClick={() => navigate('/details', { state: { details: backObj } })}
       >
         Back
       </button>
+
+      {/* Try a Different Source Button */}
+      {/* <button
+        className="absolute bottom-8 right-8 z-10 px-4 py-2 bg-gray-800 bg-opacity-50 text-white rounded-lg hover:bg-opacity-75 backdrop-blur-md"
+        onClick={handleCycleSource}
+      >
+        Try a Different Source
+      </button> */}
 
       {/* Video Player */}
       <iframe
