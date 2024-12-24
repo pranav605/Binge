@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const AnimeSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAnime, setSelectedAnime] = useState(null);
   const [volume, setVolume] = useState('');
   const navigate = useNavigate();
+  const { searchQuery: urlSearchQuery } = useParams(); // Get the searchQuery from URL params
 
-  const handleSearch = async () => {
-    const query = `
+  // Fetch anime data based on the search query
+  const handleSearch = useCallback(async (query) => {
+    const queryString = `
       query ($search: String) {
         Media(search: $search, type: ANIME) {
           id
@@ -23,24 +25,24 @@ const AnimeSearch = () => {
         }
       }
     `;
-    const variables = { search: searchQuery };
+    const variables = { search: query };
 
     const response = await fetch('https://graphql.anilist.co', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ query, variables }),
+      body: JSON.stringify({ query: queryString, variables }),
     });
 
     const data = await response.json();
     const anime = data?.data?.Media;
     setSelectedAnime(anime || null);
-  };
+  }, []);
 
   const handleVolumeNavigate = () => {
     if (selectedAnime && volume) {
-      navigate(`/manga/${selectedAnime.id}/${volume}`);
+      navigate(`/manga/${selectedAnime.id}/${volume}/${searchQuery}`);
     } else {
       alert('Please select a valid volume number.');
     }
@@ -48,9 +50,29 @@ const AnimeSearch = () => {
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      handleSearch();
+      handleSearch(searchQuery); // Trigger search when user presses enter
+      navigate(`/anime/${searchQuery}`); // Update URL only when user presses enter
     }
   };
+
+  const handleKeyDownVolume = (event) => {
+    if (event.key === 'Enter') {
+      handleVolumeNavigate();
+    }
+  };
+
+  const handleSearchButtonClick = () => {
+    handleSearch(searchQuery); // Trigger search when button is clicked
+    navigate(`/anime/${searchQuery}`); // Update URL when search is triggered
+  };
+
+  // When the component mounts or URL param changes, trigger the search with the URL query
+  useEffect(() => {
+    if (urlSearchQuery) {
+      setSearchQuery(urlSearchQuery);
+      handleSearch(urlSearchQuery); // Trigger search when URL changes
+    }
+  }, [urlSearchQuery, handleSearch]);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-4">
@@ -61,12 +83,12 @@ const AnimeSearch = () => {
             type="text"
             placeholder="Search Anime"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
+            onChange={(e) => setSearchQuery(e.target.value)} // Just update state on input change
+            onKeyDown={handleKeyDown} // Trigger search when user presses Enter
             className="flex-grow p-4 bg-gray-800 text-white rounded-l-lg outline-none"
           />
           <button
-            onClick={handleSearch}
+            onClick={handleSearchButtonClick} // Trigger search when button is clicked
             className="p-4 bg-blue-600 hover:bg-blue-700 rounded-r-lg text-white font-semibold"
           >
             Search
@@ -90,6 +112,7 @@ const AnimeSearch = () => {
                 placeholder="Enter Volume Number"
                 value={volume}
                 onChange={(e) => setVolume(e.target.value)}
+                onKeyDown={handleKeyDownVolume}
                 className="p-3 bg-gray-800 text-white rounded-l-lg outline-none w-1/2"
               />
               <button
