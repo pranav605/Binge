@@ -55,7 +55,7 @@ export default function Player() {
 
       {/* Try a Different Source Button */}
       <button
-        className="absolute bottom-8 right-8 z-10 px-4 py-2 bg-gray-800 bg-opacity-50 text-white rounded-lg hover:bg-opacity-75 backdrop-blur-md"
+        className="absolute bottom-8 hidden right-8 z-10 px-4 py-2 bg-gray-800 bg-opacity-50 text-white rounded-lg hover:bg-opacity-75 backdrop-blur-md"
         onClick={handleCycleSource}
       >
         Try a Different Source
