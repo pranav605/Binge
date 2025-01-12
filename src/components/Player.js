@@ -46,12 +46,12 @@ export default function Player() {
   return (
     <div className="relative h-screen">
       {/* Back Button */}
-      <button
+      {/* <button
         className="absolute top-4 left-4 z-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         onClick={() => navigate('/details', { state: { details: backObj } })}
       >
         Back
-      </button>
+      </button> */}
 
       {/* Try a Different Source Button */}
       <button
