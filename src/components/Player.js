@@ -43,6 +43,65 @@ export default function Player() {
     };
   }, [navigate, backObj]);
 
+  useEffect(()=>{window.addEventListener('keydown',e=>{
+    switch (e.keyCode) {
+      case 27: // Back Button (Esc)
+        console.log('Back button pressed');
+        // Assuming navigate is a global function
+        navigate('/details', { state: { details: backObj } });
+        break;
+    
+      case 13: // OK Button (Enter)
+        console.log('OK button pressed');
+        
+        // Simulate spacebar press
+        const spacebarEvent13 = new KeyboardEvent('keydown', {
+            key: ' ',
+            code: 'Space',
+            keyCode: 32, // Spacebar keycode
+            which: 32,   // Spacebar keycode
+            bubbles: true,
+            cancelable: true,
+        });
+    
+        const activeElement13 = document.activeElement;
+        if (activeElement13) {
+            activeElement13.dispatchEvent(spacebarEvent13);
+            console.log('Spacebar event dispatched to the active element.');
+        } else {
+            console.warn('No active element to dispatch the event.');
+        }
+        break;
+    
+      case 179: // Play/Pause
+        console.log('Play/Pause button pressed');
+        
+        // Simulate spacebar press
+        const spacebarEvent179 = new KeyboardEvent('keydown', {
+            key: ' ',
+            code: 'Space',
+            keyCode: 32, // Spacebar keycode
+            which: 32,   // Spacebar keycode
+            bubbles: true,
+            cancelable: true,
+        });
+    
+        const activeElement179 = document.activeElement;
+        if (activeElement179) {
+            activeElement179.dispatchEvent(spacebarEvent179);
+            console.log('Spacebar event dispatched to the active element.');
+        } else {
+            console.warn('No active element to dispatch the event.');
+        }
+        break;
+    
+      default:
+        console.log("not handled");
+    }
+    
+    
+  })})
+
   return (
     <div className="relative h-screen">
       {/* Back Button */}
