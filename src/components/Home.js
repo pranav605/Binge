@@ -49,10 +49,25 @@ const Home = () => {
     return results.filter((movie) => {
       const description = (movie.overview || '').toLowerCase();
       const title = (movie.title || movie.name || '').toLowerCase(); // Check title or name
-      return !filter.check(description) && !filter.check(title);
+      return !filter.check(description) && !filter.check(title) && movie.adult === false && ( movie.original_language && ( movie.original_language == 'hi' || movie.original_language == 'te' || movie.original_language == 'en'))
     });
   };
   
+  const fetchPageData = async (pgNo) => {
+    try{
+      const response = await fetch(
+        `https://api.themoviedb.org/3/search/multi?api_key=${tmdbApiKey}&include_adult=false&query=${encodeURIComponent(
+          searchQuery
+        )}&page=${pgNo}`
+      );
+      const data = await response.json();
+      if(data.results){
+        return data.results;
+      }
+    }catch(err){
+      return []
+    }
+  }
   // Handle Search
   const handleSearch = async () => {
     if (searchQuery.trim()) {
@@ -60,14 +75,26 @@ const Home = () => {
       setIsLoading(true); // Start loader
       try {
         const response = await fetch(
-          `https://api.themoviedb.org/3/search/multi?api_key=${tmdbApiKey}&query=${encodeURIComponent(
+          `https://api.themoviedb.org/3/search/multi?api_key=${tmdbApiKey}&include_adult=false&query=${encodeURIComponent(
             searchQuery
-          )}&include_adult=false`
+          )}`
         );
         const data = await response.json();
+        var acc_data = [];
+        console.log(data.total_pages);
 
+        if(data.total_pages > 1){
+          
+          for(let i=1; i<=data.total_pages; i++){
+            const pg_response = await fetchPageData(i);
+            pg_response.forEach(d => {
+              acc_data.push(d)
+            })
+          }
+        }
+        
         const enhancedResults = await Promise.all(
-          (data.results || []).map(async (movie) => {
+          (data.total_pages>1?acc_data:data.results || []).map(async (movie) => {
             if (!movie.poster_path && movie.media_type !== 'person') {
               const imdbId = await fetchImdbId(movie.id, movie.media_type);
               const omdbPoster = await fetchOmdbPoster(imdbId);
@@ -76,8 +103,10 @@ const Home = () => {
             return { ...movie, omdbFetched: false };
           })
         );
-
+        console.log(enhancedResults);
+        
         const filteredResults = filterResults(enhancedResults); // Apply filter
+        
         setSearchResults(filteredResults);
       } catch (error) {
         console.error('Error fetching search results:', error);
