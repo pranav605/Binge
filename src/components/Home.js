@@ -49,7 +49,7 @@ const Home = () => {
     return results.filter((movie) => {
       const description = (movie.overview || '').toLowerCase();
       const title = (movie.title || movie.name || '').toLowerCase(); // Check title or name
-      return !filter.check(description) && !filter.check(title) && movie.adult === false && ( movie.original_language && ( movie.original_language == 'hi' || movie.original_language == 'te' || movie.original_language == 'en'))
+      return !filter.check(description) && !filter.check(title) && movie.adult === false && ( movie.original_language && ( movie.original_language === 'hi' || movie.original_language === 'te' || movie.original_language === 'en'))
     });
   };
   
@@ -81,7 +81,6 @@ const Home = () => {
         );
         const data = await response.json();
         var acc_data = [];
-        console.log(data.total_pages);
 
         if(data.total_pages > 1){
           
@@ -103,7 +102,6 @@ const Home = () => {
             return { ...movie, omdbFetched: false };
           })
         );
-        console.log(enhancedResults);
         
         const filteredResults = filterResults(enhancedResults); // Apply filter
         
