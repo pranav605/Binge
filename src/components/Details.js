@@ -14,7 +14,7 @@ const Details = () => {
 
   useEffect(() => {
     if (details && details.media_type === 'tv') {
-      fetch(`https://api.themoviedb.org/3/tv/${details.id}?api_key=8433e4e03a9efa0d7f9983569b7ef196&append_to_response=seasons`)
+      fetch(`https://api.themoviedb.org/3/tv/${details.id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&append_to_response=seasons`)
         .then((response) => response.json())
         .then((data) => {
           setSeasons(data.seasons || []);
@@ -44,7 +44,7 @@ const Details = () => {
     setExpandedSeason(seasonNumber);
 
     if (!episodes[seasonNumber]) {
-      fetch(`https://api.themoviedb.org/3/tv/${details.id}/season/${seasonNumber}?api_key=8433e4e03a9efa0d7f9983569b7ef196`)
+      fetch(`https://api.themoviedb.org/3/tv/${details.id}/season/${seasonNumber}?api_key=${process.env.REACT_APP_TMDB_API_KEY}`)
         .then((response) => response.json())
         .then((data) => {
           setEpisodes((prev) => ({ ...prev, [seasonNumber]: data.episodes }));

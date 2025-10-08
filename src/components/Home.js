@@ -9,8 +9,8 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false); // State for loader
   const navigate = useNavigate();
   const filter = require('leo-profanity');
-  const omdbApiKey = 'b0f3c56f'; // Replace with your OMDB API key
-  const tmdbApiKey = '8433e4e03a9efa0d7f9983569b7ef196'; // TMDB API key
+  const omdbApiKey = process.env.REACT_APP_OMDB_API_KEY; // Replace with your OMDB API key
+  const tmdbApiKey = process.env.REACT_APP_TMDB_API_KEY; // TMDB API key
 
   
   const handleMovieClick = (movie) => {
@@ -56,11 +56,12 @@ const Home = () => {
   const fetchPageData = async (pgNo) => {
     try{
       const response = await fetch(
-        `https://api.themoviedb.org/3/search/multi?api_key=${tmdbApiKey}&include_adult=false&query=${encodeURIComponent(
+        `https://api.themoviedb.org/3/search/multi?api_key=${process.env.REACT_APP_TMDB_API_KEY}&include_adult=false&query=${encodeURIComponent(
           searchQuery
         )}&page=${pgNo}`
       );
       const data = await response.json();
+      
       if(data.results){
         return data.results;
       }
@@ -91,6 +92,7 @@ const Home = () => {
             })
           }
         }
+
         
         const enhancedResults = await Promise.all(
           (data.total_pages>1?acc_data:data.results || []).map(async (movie) => {
