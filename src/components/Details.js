@@ -102,7 +102,7 @@ const Details = () => {
       {/* Backdrop Image */}
       <div className="relative w-full h-[60vh] overflow-hidden">
         <img
-          src={`https://image.tmdb.org/t/p/original${details.backdrop_path}`}
+          src={ details.backdrop_path ? `https://image.tmdb.org/t/p/original${details.backdrop_path}` : `https://image.tmdb.org/t/p/w500${details.poster_path}`}
           alt={details.title || details.name}
           className="w-full h-full object-cover opacity-50"
         />

@@ -17,13 +17,18 @@ const Home = () => {
   const [nowPlaying, setNowPlaying] = useState([]);
   const fetchTeluguMoviesURL = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_origin_country=IN&with_original_language=te';
   const fetchHindiMoviesURL = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_origin_country=IN&with_original_language=hi';
+  const fetchTrendingURL = 'https://api.themoviedb.org/3/trending/movie/day?language=en-US';
+  const fetchTrendingTVURL= 'https://api.themoviedb.org/3/trending/tv/day?language=en-US';
   const [teluguMovies, setTeluguMovies] = useState([]);
   const [hindiMovies, setHindiMovies] = useState([]);
-
+  const [trendingMovies, setTrendingMovies] = useState([]);
+  const [trendingTV, setTredingTV] = useState([]);
   const rowRef = useRef();
   const nowPlayingRef = useRef();
   const telRef = useRef();
   const hindiRef = useRef();
+  const trendingRef = useRef();
+  const trendingTvRef = useRef();
 
   const scroll = (direction, rowRef) => {
     if (rowRef.current) {
@@ -82,20 +87,18 @@ const Home = () => {
       }
 
       if (movie.media_type === 'tv') {
-        console.log(movie.genre_ids.includes(35), title);
-
         return (
           !filter.check(description) &&
           !filter.check(title) &&
-          movie.popularity > 1 &&
+          movie.popularity > 0.8 &&
           movie.vote_average !== 0 &&
-          !movie.genre_ids.includes(35) &&
+          movie.vote_count > 0 &&
+          // !movie.genre_ids.includes(35) &&
           movie.adult === false &&
           (movie.original_language === 'hi' ||
             movie.original_language === 'te' ||
             movie.original_language === 'en' ||
-            movie.original_language === 'ml' ||
-            movie.original_language === 'ja'
+            movie.original_language === 'ml' 
           )
         );
       } else if (movie.media_type === 'movie') {
@@ -104,15 +107,15 @@ const Home = () => {
           !filter.check(description) &&
           !filter.check(title) &&
           (movie.release_date && release <= currDate) &&
-          movie.popularity > 1 &&
+          movie.popularity > 0.8 &&
           movie.vote_average !== 0 &&
-          !movie.genre_ids.includes(35) &&
+          movie.vote_count > 0 &&
+          // !movie.genre_ids.includes(35) &&
           movie.adult === false &&
           (movie.original_language === 'hi' ||
             movie.original_language === 'te' ||
             movie.original_language === 'en' ||
-            movie.original_language === 'ml' ||
-            movie.original_language === 'ja'
+            movie.original_language === 'ml' 
           )
         );
       } else {
@@ -125,7 +128,7 @@ const Home = () => {
 
     try {
       const response = await fetch(
-        `https://api.themoviedb.org/3/search/multi?api_key=${tmdbApiKey}&include_adult=false&query=${encodeURIComponent(
+        `https://api.themoviedb.org/3/search/multi?api_key=${tmdbApiKey}&sort_by=popularity.desc&include_adult=false&query=${encodeURIComponent(
           searchQuery
         )}&page=${pgNo}`
       );
@@ -174,10 +177,8 @@ const Home = () => {
           return { ...movie, omdbFetched: false };
         })
       );
-      console.log(enhancedResults);
 
       const filteredResults = filterResults(enhancedResults);
-      console.log(filteredResults);
 
 
       setSearchResults(filteredResults);
@@ -227,12 +228,24 @@ const Home = () => {
       setHindiMovies(data.results || []);
     }
     fetchHindi();
+    const fetchTrending = async () => {
+      const response = await fetch(fetchTrendingURL, options);
+      const data = await response.json();
+      setTrendingMovies(data.results || []);
+    }
+    fetchTrending();
+    const fetchTrendingTV = async () => {
+      const response = await fetch(fetchTrendingTVURL, options);
+      const data = await response.json();
+      setTredingTV(data.results || []);
+    }
+    fetchTrendingTV();
   }, [tmdbApiKey]);
 
 
 
   return (
-    <div className={`min-h-screen bg-zinc-900 text-white ${isSearched ? 'pt-16' : 'flex flex-col items-center justify-center'}`}>
+    <div className={`min-h-screen bg-zinc-900 text-white ${isSearched ? 'py-16' : 'flex flex-col items-center justify-center'}`}>
 
       {/* Anime Button */}
       <button
@@ -275,6 +288,90 @@ const Home = () => {
       {!isSearched ? (
         <>
           <div className="w-full mt-8 px-4 sm:px-6 relative">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-white">Trending Movies</h2>
+
+            <button onClick={() => scroll('left', trendingRef)} className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/70 text-white p-2 rounded-full z-20 hover:bg-black/90 transition">
+              <ChevronLeftIcon className="w-5 sm:w-6 h-5 sm:h-6" />
+            </button>
+            <button onClick={() => scroll('right', trendingRef)} className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/70 text-white p-2 rounded-full z-20 hover:bg-black/90 transition">
+              <ChevronRightIcon className="w-5 sm:w-6 h-5 sm:h-6" />
+            </button>
+
+            <div ref={trendingRef} className="flex gap-3 sm:gap-4 overflow-x-auto p-4 sm:p-6 snap-x snap-mandatory scroll-smooth no-scrollbar">
+              {trendingMovies.map((movie, idx) => (
+                <motion.div
+                  key={movie.id || idx}
+                  whileHover={{ scale: 1.05, zIndex: 10 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                  className="relative flex-shrink-0 w-36 sm:w-44 md:w-48 h-56 sm:h-64 md:h-72 bg-neutral-800 rounded-2xl overflow-hidden shadow-lg snap-center cursor-pointer"
+                  onClick={() => handleDiscoverMovieClick(movie)}
+                >
+                  <img
+                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                    alt={movie.title}
+                    className="w-full h-full object-cover transition-opacity duration-300 ease-out group-hover:opacity-70"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80"></div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileHover={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className="absolute bottom-0 p-2 sm:p-3 text-white w-full"
+                  >
+                    <h2 className="text-xs sm:text-sm md:text-base font-semibold truncate">{movie.title}</h2>
+                    <div className="flex items-center gap-1 text-yellow-400 text-xs mt-1">
+                      <StarIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span>{movie.vote_average?.toFixed(1)}</span>
+                    </div>
+                    <p className="text-neutral-300 text-xs sm:text-sm mt-1 line-clamp-2">{movie.overview}</p>
+                  </motion.div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+          <div className="w-full mt-8 px-4 sm:px-6 relative">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-white">Trending TV</h2>
+
+            <button onClick={() => scroll('left', trendingTvRef)} className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/70 text-white p-2 rounded-full z-20 hover:bg-black/90 transition">
+              <ChevronLeftIcon className="w-5 sm:w-6 h-5 sm:h-6" />
+            </button>
+            <button onClick={() => scroll('right', trendingTvRef)} className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/70 text-white p-2 rounded-full z-20 hover:bg-black/90 transition">
+              <ChevronRightIcon className="w-5 sm:w-6 h-5 sm:h-6" />
+            </button>
+
+            <div ref={trendingTvRef} className="flex gap-3 sm:gap-4 overflow-x-auto p-4 sm:p-6 snap-x snap-mandatory scroll-smooth no-scrollbar">
+              {trendingTV.map((movie, idx) => (
+                <motion.div
+                  key={movie.id || idx}
+                  whileHover={{ scale: 1.05, zIndex: 10 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                  className="relative flex-shrink-0 w-36 sm:w-44 md:w-48 h-56 sm:h-64 md:h-72 bg-neutral-800 rounded-2xl overflow-hidden shadow-lg snap-center cursor-pointer"
+                  onClick={() => {movie.media_type === 'tv' ? handleMovieClick(movie): handleDiscoverMovieClick(movie)}}
+                >
+                  <img
+                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                    alt={movie.title}
+                    className="w-full h-full object-cover transition-opacity duration-300 ease-out group-hover:opacity-70"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80"></div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileHover={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className="absolute bottom-0 p-2 sm:p-3 text-white w-full"
+                  >
+                    <h2 className="text-xs sm:text-sm md:text-base font-semibold truncate">{movie.title}</h2>
+                    <div className="flex items-center gap-1 text-yellow-400 text-xs mt-1">
+                      <StarIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span>{movie.vote_average?.toFixed(1)}</span>
+                    </div>
+                    <p className="text-neutral-300 text-xs sm:text-sm mt-1 line-clamp-2">{movie.overview}</p>
+                  </motion.div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+          <div className="w-full mt-8 px-4 sm:px-6 relative">
             <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-white">Now Playing</h2>
 
             <button onClick={() => scroll('left', nowPlayingRef)} className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/70 text-white p-2 rounded-full z-20 hover:bg-black/90 transition">
@@ -291,7 +388,7 @@ const Home = () => {
                   whileHover={{ scale: 1.05, zIndex: 10 }}
                   transition={{ duration: 0.3, ease: 'easeOut' }}
                   className="relative flex-shrink-0 w-36 sm:w-44 md:w-48 h-56 sm:h-64 md:h-72 bg-neutral-800 rounded-2xl overflow-hidden shadow-lg snap-center cursor-pointer"
-                  onClick={() => handleDiscoverMovieClick(movie)}
+                  onClick={() => {movie.media_type === 'tv' ? handleMovieClick(movie): handleDiscoverMovieClick(movie)}}
                 >
                   <img
                     src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -333,7 +430,7 @@ const Home = () => {
                   whileHover={{ scale: 1.05, zIndex: 10 }}
                   transition={{ duration: 0.3, ease: 'easeOut' }}
                   className="relative flex-shrink-0 w-36 sm:w-44 md:w-48 h-56 sm:h-64 md:h-72 bg-neutral-800 rounded-2xl overflow-hidden shadow-lg snap-center cursor-pointer"
-                  onClick={() => handleDiscoverMovieClick(movie)}
+                  onClick={() => {movie.media_type === 'tv' ? handleMovieClick(movie): handleDiscoverMovieClick(movie)}}
                 >
                   <img
                     src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -442,7 +539,7 @@ const Home = () => {
               ))}
             </div>
           </div>
-
+          
         </>
       ) : (
         <div className="mt-8 px-4 sm:px-6">
