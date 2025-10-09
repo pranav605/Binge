@@ -16,7 +16,7 @@ export default function Player() {
   const generateSrcUrl = (index = currentDomainIndex) => {
     const currentDomain = domains[index];
     if (isMovie) {
-      return `https://${currentDomain}/embed/movie/${details.tmdb_id}`;
+      return `https://${currentDomain}/embed/movie/${details.tmdb_id}?autoPlay=true`;
     } else {
       return `https://${currentDomain}/embed/tv/${details.tmdb_id}/${details.season}/${details.episode}?autoPlay=true&nextEpisode=true&episodeSelector=true`;
     }
@@ -30,7 +30,6 @@ export default function Player() {
   const handleCycleSource = () => {
     const nextIndex = (currentDomainIndex + 1) % domains.length;
     setCurrentDomainIndex(nextIndex);
-    alert(generateSrcUrl(nextIndex));
     setSrcUrl(generateSrcUrl(nextIndex));
   };
 

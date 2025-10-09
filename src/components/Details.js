@@ -110,7 +110,7 @@ const Details = () => {
       </div>
 
       {/* Content Section */}
-      <div className="max-w-5xl mx-auto -mt-40 p-6 relative z-10">
+      <div className="max-w-5xl mx-auto -mt-80 md:-mt-40 p-6 relative z-10">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Poster */}
           {details.poster_path && (
