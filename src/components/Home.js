@@ -102,14 +102,14 @@ const Home = () => {
           )
         );
       } else if (movie.media_type === 'movie') {
-
+        
         return (
           !filter.check(description) &&
           !filter.check(title) &&
           (movie.release_date && release <= currDate) &&
           movie.popularity > 0.8 &&
-          movie.vote_average !== 0 &&
-          movie.vote_count > 0 &&
+          // movie.vote_average !== 0 &&
+          // movie.vote_count > 0 &&
           // !movie.genre_ids.includes(35) &&
           movie.adult === false &&
           (movie.original_language === 'hi' ||
@@ -249,18 +249,19 @@ const Home = () => {
 
       {/* Anime Button */}
       <button
-        className="px-4 sm:px-6 py-2 sm:py-3 bg-green-600 rounded-lg hover:bg-green-700 font-semibold absolute top-4 left-4 z-10 text-sm sm:text-base"
+        className="hidden px-4 sm:px-6 py-2 sm:py-3 bg-green-600 rounded-lg hover:bg-green-700 font-semibold absolute top-4 left-4 z-10 text-sm sm:text-base"
         onClick={() => navigate('/anime')}
       >
         Search Anime & Manga
       </button>
 
       {/* Logo + Search */}
-      <div className={`w-full transition-all duration-300 ${isSearched ? 'flex flex-col sm:flex-row items-center px-4 justify-center gap-4' : 'text-center max-w-md'}`}>
+      <div className={`w-full transition-all duration-300 ${isSearched ? 'flex flex-col sm:flex-row items-center px-4 justify-center gap-4' : 'text-center p-8 max-w-md'}`}>
         <img
+          onClick={()=>{setIsSearched(false); setSearchQuery('')}}
           src={logo}
           alt="Binge"
-          className={`transition-all duration-300 ${isSearched ? 'w-24 sm:w-32 h-auto mb-4 sm:mb-0' : 'mx-auto mb-8 w-72 sm:w-96 h-auto'}`}
+          className={`transition-all hover:cursor-pointer duration-300 ${isSearched ? 'w-24 sm:w-32 h-auto mb-4 sm:mb-0' : 'mx-auto mb-8 w-72 sm:w-96 h-auto'}`}
         />
         <div className='flex items-center justify-center'>
           <div className="flex items-center border border-gray-700 rounded-lg overflow-hidden max-w-sm w-full md:max-w-xl">
