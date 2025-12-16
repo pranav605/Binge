@@ -8,15 +8,15 @@ export default function Player() {
   const isMovie = details.type === 'movie';
 
   // Domains to cycle through
-  const domains = ['www.vidking.net', 'vidsrc.cx'];
-  // ,'embed.vidsrc.pk', 'localhost'
-  const [currentDomainIndex, setCurrentDomainIndex] = useState(0);
+  const domains = ['player.videasy.net','www.vidking.net', 'vidsrc.cx', 'localhost'];
+  // ,'embed.vidsrc.pk', 'localhost', 'player.videasy.net',
+  const [currentDomainIndex, setCurrentDomainIndex] = useState(2);
 
   // Generate the URL based on the current domain
   const generateSrcUrl = (index = currentDomainIndex) => {
     const currentDomain = domains[index];
     if (isMovie) {
-      return `https://${currentDomain}/embed/movie/${details.tmdb_id}?autoPlay=true`;
+      return currentDomain === 'player.videasy.net' ? `https://${currentDomain}/movie/${details.tmdb_id}` : `https://${currentDomain}/embed/movie/${details.tmdb_id}?autoPlay=true`;
     } else {
       return `https://${currentDomain}/embed/tv/${details.tmdb_id}/${details.season}/${details.episode}?autoPlay=true&nextEpisode=true&episodeSelector=true`;
     }
