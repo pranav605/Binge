@@ -10,7 +10,7 @@ export default function Player() {
   // Domains to cycle through
   const domains = ['player.videasy.net','www.vidking.net', 'vidsrc.cx', 'localhost'];
   // ,'embed.vidsrc.pk', 'localhost', 'player.videasy.net',
-  const [currentDomainIndex, setCurrentDomainIndex] = useState(2);
+  const [currentDomainIndex, setCurrentDomainIndex] = useState(1);
 
   // Generate the URL based on the current domain
   const generateSrcUrl = (index = currentDomainIndex) => {
