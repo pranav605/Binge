@@ -98,7 +98,8 @@ const Home = () => {
           (movie.original_language === 'hi' ||
             movie.original_language === 'te' ||
             movie.original_language === 'en' ||
-            movie.original_language === 'ml' 
+            movie.original_language === 'ml' ||
+            movie.name.toLowerCase().includes('naruto')
           )
         );
       } else if (movie.media_type === 'movie') {
